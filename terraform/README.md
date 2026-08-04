@@ -144,7 +144,7 @@ After a successful dev apply, the script also adds/updates a kubectl context
 named after the cluster, for example `opsfleet-dev`.
 
 ```bash
-AWS_PROFILE=squid terraform/scripts/run.sh --apply
+AWS_PROFILE=(your_profile) terraform/scripts/run.sh --apply
 ```
 
 Approximate deploy time: 15–20 minutes.
@@ -296,7 +296,7 @@ same module structure, each with its own `backend.hcl` / `terraform.tfvars`.
 ## Cleanup
 
 ```bash
-AWS_PROFILE=squid terraform/scripts/destroy.sh --apply
+AWS_PROFILE=(your_profile) terraform/scripts/destroy.sh --apply
 ```
 
 `destroy.sh --apply` destroys the dev environment before bootstrap. Inside
