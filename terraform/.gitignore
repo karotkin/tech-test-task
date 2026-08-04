@@ -1,0 +1,30 @@
+# Local .terraform directories
+**/.terraform/*
+
+# State files (never commit these — use the S3 backend)
+*.tfstate
+*.tfstate.*
+
+# Saved plan files (produced by scripts/plan-all.sh)
+*.tfplan
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Real variable/backend files — commit only the .example versions
+*.tfvars
+*.tfvars.json
+backend.hcl
+!*.tfvars.example
+!backend.hcl.example
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI config
+.terraformrc
+terraform.rc

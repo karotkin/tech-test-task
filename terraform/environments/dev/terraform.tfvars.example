@@ -1,0 +1,50 @@
+# -----------------------------------------------------------------------------
+# General
+# -----------------------------------------------------------------------------
+aws_region      = "us-east-1"
+environment     = "dev"
+cluster_name    = "opsfleet-dev"
+cluster_version = "1.36"
+
+# -----------------------------------------------------------------------------
+# VPC
+# -----------------------------------------------------------------------------
+vpc_cidr            = "10.21.0.0/16"
+availability_zones  = ["us-east-1a", "us-east-1b", "us-east-1c"]
+private_subnets     = ["10.21.1.0/24", "10.21.2.0/24", "10.21.3.0/24"]
+public_subnets      = ["10.21.101.0/24", "10.21.102.0/24", "10.21.103.0/24"]
+
+# -----------------------------------------------------------------------------
+# Cluster access
+# -----------------------------------------------------------------------------
+# Restrict to your office/VPN CIDR(s). Leaving 0.0.0.0/0 exposes the API
+# server to the internet (auth is still required, but don't do this in prod).
+public_access_cidrs = ["0.0.0.0/0"]
+
+# Grant developers cluster access as code via EKS Access Entries instead of
+# sharing kubeconfig files or editing aws-auth by hand. Each dev assumes this
+# IAM role (e.g. via `aws sts assume-role` or SSO) then runs:
+#   aws eks update-kubeconfig --name opsfleet-dev --role-arn <principal_arn>
+# access_entries = {
+#   developer = {
+#     principal_arn = "arn:aws:iam::123456789012:role/developer-role"
+#     policy_associations = {
+#       view = {
+#         policy_arn   = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+#         access_scope = { type = "namespace", namespaces = ["default"] }
+#       }
+#     }
+#   }
+# }
+
+# -----------------------------------------------------------------------------
+# Karpenter NodePools
+# -----------------------------------------------------------------------------
+# system: on-demand nodes for critical infrastructure
+system_instance_families = ["t3", "t3a", "m5"]
+
+# app-x86: spot instances for general applications
+app_x86_instance_families = ["t3", "t3a", "c5", "c5a", "c6i", "m5", "m5a", "m6i", "r5", "r6i"]
+
+# app-graviton: spot Graviton instances for ARM-compatible apps
+app_graviton_instance_families = ["t4g", "c7g", "m7g", "r7g", "c6g", "m6g", "r6g"]

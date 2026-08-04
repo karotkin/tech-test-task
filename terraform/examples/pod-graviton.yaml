@@ -1,0 +1,82 @@
+# Example: Pod scheduled on Graviton (arm64) instances
+#
+# This pod targets the `app-graviton` NodePool which provisions
+# arm64 (Graviton) Spot instances. Karpenter automatically selects
+# the best-priced instance type from the allowed families.
+#
+# NOTE: The container image MUST support arm64 architecture.
+#       The nginx image is multi-arch and works on both amd64 and arm64.
+#
+# Apply with:
+#   kubectl apply -f pod-graviton.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-graviton
+  labels:
+    app: nginx
+    arch: arm64
+spec:
+  # Target arm64 (Graviton) nodes — matches the app-graviton NodePool
+  nodeSelector:
+    kubernetes.io/arch: arm64
+
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+      resources:
+        requests:
+          cpu: "250m"
+          memory: "256Mi"
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
+
+---
+# Example: Deployment scheduled on Graviton (arm64) instances
+#
+# This Deployment targets Graviton nodes exclusively. Karpenter
+# will provision arm64 Spot instances (or on-demand as fallback)
+# to run these pods. Use this pattern for ARM-compatible workloads
+# to achieve better price/performance on Graviton.
+#
+# Verify your image supports arm64 before deploying:
+#   docker buildx imagetools inspect nginx:latest | grep arm64
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-graviton
+  labels:
+    app: nginx
+    arch: arm64
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      arch: arm64
+  template:
+    metadata:
+      labels:
+        app: nginx
+        arch: arm64
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

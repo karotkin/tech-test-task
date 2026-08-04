@@ -1,0 +1,74 @@
+# Example: Pod scheduled on x86 (amd64) instances
+#
+# This pod targets the `app-x86` NodePool which provisions
+# amd64 Spot instances. Karpenter will match this pod to
+# the NodePool based on the nodeSelector constraint.
+#
+# Apply with:
+#   kubectl apply -f pod-x86.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-x86
+  labels:
+    app: nginx
+    arch: amd64
+spec:
+  # Target x86 (amd64) nodes — matches the app-x86 NodePool
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+      resources:
+        requests:
+          cpu: "250m"
+          memory: "256Mi"
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
+
+---
+# Example: Deployment scheduled on x86 (amd64) instances
+#
+# This Deployment demonstrates how to run multiple replicas
+# of a workload on x86 Spot instances managed by Karpenter.
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-x86
+  labels:
+    app: nginx
+    arch: amd64
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      arch: amd64
+  template:
+    metadata:
+      labels:
+        app: nginx
+        arch: amd64
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
